@@ -25,6 +25,7 @@ class CreateClass():
         self.window.configure(bg = "#75181A")
         self.create_widgets()
 
+
     def create_widgets(self):
         self.canvas = Canvas(
             self.window,
