@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>resources.qrc</file>
     <file>images/bars-solid (1).png</file>
     <file>images/border-all-solid.png</file>
     <file>images/chevron-down-solid.png</file>

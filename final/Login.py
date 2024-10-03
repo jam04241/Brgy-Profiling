@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import messagebox
 import customtkinter as Ctkinter
 from pathlib import Path
+
 import Create_Acc
 
 # from tkinter import *
@@ -22,6 +23,7 @@ def relative_to_assets(path: str) -> Path:
 
 class login_class:
     def __init__(self):
+        super().__init__
         self.window = Tk()
         self.window.geometry("1000x700")
         self.window.configure(bg = "#75181A")
@@ -189,6 +191,7 @@ class login_class:
         
             else:
                 self.entry_2.configure(show="✶")  
+
         ########### TOGGLE PASSWORD #############
 
 
@@ -224,6 +227,9 @@ class login_class:
                             tk.messagebox.showwarning("Warning!", "Invalid Username or Password")
                         else:
                             tk.messagebox.showinfo("Success", f"Login Successful!\nUsername: {username}")
+                            self.window.destroy()
+                            from main import App
+                            App()
 
                     except Error as e:
                         print(f"Error connecting to MySQL: {e}")
@@ -239,7 +245,10 @@ class login_class:
             self.window.mainloop()
 
         except Exception as e:
-            print(f"Error in main loop: {e}")       
+            print(f"Error in main loop: {e}")
+
+
+
 ########################################
 
 
