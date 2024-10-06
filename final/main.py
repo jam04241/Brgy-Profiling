@@ -1,24 +1,10 @@
-from PySide6.QtWidgets import QApplication
-from frontPage import MySideBar
 import sys
+from PySide6.QtWidgets import QApplication
+from frontPage import MySideBar  # Assuming this is where your main window (MySideBar) is
 
-#app = QApplication(sys.argv)
-
-#window = MySideBar()
-
-#window.show()
-#app.exec()
-
-
-class App:
-    def __init__(self):
-        super().__init__()
-        self.app = QApplication(sys.argv)
-
-        self.window = MySideBar()
-
-        self.window.show()
-        self.app.exec()
-        
-if __name__ == "__main__":
-    app = App()
+app = QApplication(sys.argv)
+ 
+window = MySideBar()
+ 
+window.show()
+app.exec()  
