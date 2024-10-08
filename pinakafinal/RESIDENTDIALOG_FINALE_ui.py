@@ -17,7 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QDialog,
     QFrame, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QSizePolicy, QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QVBoxLayout, QWidget,QMessageBox)
+import mysql.connector
+
 
 class Ui_ResidentsDialog(QDialog):
     def __init__(self, parent=None):
@@ -362,8 +364,8 @@ class Ui_ResidentsDialog(QDialog):
 
 
         self.retranslateUi(self)
-        self.cancel_residentbutton.toggled.connect(self.close)
-        self.save_residentbutton.toggled.connect(self.close)
+        
+
 
         QMetaObject.connectSlotsByName(self)
     # setupUi
@@ -402,4 +404,99 @@ class Ui_ResidentsDialog(QDialog):
         self.cancel_residentbutton.setText(QCoreApplication.translate("ResidentsDialog", u"Cancel", None))
         self.save_residentbutton.setText(QCoreApplication.translate("ResidentsDialog", u"Add", None))
     # retranslateUi
+    
+    #ADD NEW RESIDENT WHEN PRESSED A BUTTON
+        self.save_residentbutton.clicked.connect(self.add_resident)
+        self.cancel_residentbutton.clicked.connect(self.close)
+    
 
+    #CREATE DATABASE CONNECTION
+    def create_connection(self):
+        host_name = "localhost"
+        user_name = "root"
+        mypassword = ""
+        database_name = "brgy_profiling"
+        
+        # Establish connection to MySQL
+        self.mydb = mysql.connector.connect(
+            host=host_name, 
+            user=user_name, 
+            password=mypassword
+        )
+        
+        # Create a cursor to execute SQL queries
+        cursor = self.mydb.cursor()
+        
+        # Create the database if it doesn't exist
+        cursor.execute(f'CREATE DATABASE IF NOT EXISTS {database_name}')
+        
+        # Connect to the created database
+        self.mydb = mysql.connector.connect(
+            host=host_name, 
+            user=user_name, 
+            password=mypassword, 
+            database=database_name
+        )
+        
+        return self.mydb
+    
+    #INSERT NEW RESIDENT
+    
+    def insert_new_resident(self):
+        try:
+            connection = self.create_connection()
+            if connection is None:
+                return
+
+            cursor = connection.cursor()
+
+            # Create list of resident information
+            self.new_resident = [
+                self.firstname_lineEdit.text(),
+                self.lastname_lineEdit.text(),
+                self.middle_lineEdit.text(),
+                self.age_lineEdit.text(),
+                self.sex_comboBox.currentText(),
+                self.PWD_comboBox.currentText(),
+                self.birthplace_lineEdit.text(),
+                self.dob_dateEdit.date().toString("yyyy-MM-dd"),
+                self.bloodtype_lineEdit.text(),
+                self.Civilstatus_comboBox.currentText(),
+                self.contact_lineEdit.text(),
+                self.emailaddress_lineEdit.text(),
+                self.address_lineEdit.text(),
+                'yes'  # Add isactive directly to the list
+            ]
+
+            # Insert query for the new resident
+            insert_resident_query = '''INSERT INTO residents(resident_id,brgy_id, admin_id,  Fname, Lname, mid_ini, Age, sex, PWD, birthplace, Birth_date, blood_type, Civil_status, contact_no, email, adrrss, isactive)
+                                        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
+
+            cursor.execute(insert_resident_query, self.new_resident)
+            connection.commit()  # Commit the transaction
+            cursor.close()
+            connection.close()
+            
+            self.show_inserted_message()  # Call the method to show the message
+        except mysql.connector.Error as err:
+            # Handle MySql Error
+            print(f"Error: {err}")
+
+            
+              
+    def show_inserted_message(self):
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Success")
+        msg_box.setText(self.firstname_lineEdit.text() + " inserted into the database")
+        msg_box.exec()
+
+    def add_resident(self):
+        self.insert_new_resident()
+        self.accept()
+        
+    #LOAD STUDENT INFORAMTION
+    def load_resident_info(self):
+        self.r
+    
+    def get_data_from_table(self):
+        pass        
